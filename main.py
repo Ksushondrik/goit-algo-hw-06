@@ -4,7 +4,10 @@ from collections import UserDict
 # Базовий клас для полів запису
 class Fild:
     def __init__(self, value):
-        self.value = value
+        if not value:
+            raise Exception("You did not specify a required argument!")
+        else:
+            self.value = value
     
     def __str__(self) -> str:
         return str(self.value)
@@ -13,23 +16,26 @@ class Fild:
 # Клас для зберігання імені контакту. Обов'язкове поле
 class Name(Fild):
     # реалізація класу
-    def __init__(self, value, name):
-        super().__init__(value)
-        self.name = name
+    def __init__(self, name):
+        if name.strip():
+            self.name = name
+        else:
+            raise Exception("You enter an empty line!")
+            
 
 
 # Клас для зберігання номера телефону. Має валідацію формату (10 цифр)
 class Phone(Fild):
     # реалізація класу
-    def __init__(self, value, phone):
-        super().__init__(value)
-        self.phone = phone
+    def __init__(self, phone):
+        self.phone = self.verify_phone(phone)
 
+    # перевірка формату номеру (має містити 10 цифр)
     def verify_phone(self, phone):
-        if len(self.phone) == 10:
+        if (len(phone) == 10) and (phone.isdigit()):
             return phone
         else:
-            raise ValueError("Wrong phone format")
+            raise Exception("Wrong phone format")
 
 
 # Клас для зберігання інформації про контакт, включаючи ім'я та список телефонів
@@ -42,24 +48,28 @@ class Record:
     def add_phone(self, phone):
         phone = Phone(phone)
         if phone not in self.phones:
-            self.phones.append(phone)        
+            self.phones.append(phone)
+        else:
+            raise Exception("This number isalready in the list!")
         
     # Видалення телефонів
     def remove_phone(self, phone):
-        phone = Phone(phone)
-        if phone in self.phones:
-            self.phones.remove(phone)
-        else:
-            pass
+        pass
 
 
     # Редагування телефонів
-    def edit_phone():
-        pass
+    def edit_phone(self,phone, new_phone):
+        self.phones[self.find_phone(phone)] = new_phone
     
     # Пошук телефону
-    def find_phone():
-        pass
+    def find_phone(self, phone):
+        if phone in self.phones:
+            return self.phones.index(phone)
+        else:
+            raise Exception("This number {phone} is not faund!")
+
+    # def get_phones(self):
+        # return self.phones
     
     def __str__(self) -> str:
         return f"Contact name: {self.name.value}, phones: {';'.join(p.value for p in self.phones)}"
@@ -67,19 +77,22 @@ class Record:
 
 # Клас для зберігання та управління записами
 class AddressBook(UserDict):
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, data = None):
+        if data is None:
+            data = {}
+        super().__init__(data)
 
     # Додавання записів
-    def add_record():
-        pass
+    def add_record(self, record):
+        self.data[record.name] = record.phones
 
     # Пошук записів за іменем
-    def find():
-        pass
+    def find(self, name):
+        if name in self.data:
+            return self.data[name]
 
     # Видалення записів за іменем
-    def delete():
+    def delete(self):
         pass
 
 
