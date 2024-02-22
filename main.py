@@ -2,7 +2,7 @@ from collections import UserDict
 
 
 # Базовий клас для полів запису
-class Fild:
+class Field:
     def __init__(self, value):
         if not value:
             raise Exception("You did not specify a required argument!")
@@ -14,28 +14,23 @@ class Fild:
     
 
 # Клас для зберігання імені контакту. Обов'язкове поле
-class Name(Fild):
+class Name(Field):
     # реалізація класу
-    def __init__(self, name):
-        if name.strip():
-            self.name = name
-        else:
-            raise Exception("You enter an empty line!")
+    class Name(Field):
+        def __init__(self, value):
+            if not value.strip():
+                raise ValueError("You entered an empty string!")
+            else:
+                super().__init__(value)
             
 
-
 # Клас для зберігання номера телефону. Має валідацію формату (10 цифр)
-class Phone(Fild):
-    # реалізація класу
-    def __init__(self, phone):
-        self.phone = self.verify_phone(phone)
-
-    # перевірка формату номеру (має містити 10 цифр)
-    def verify_phone(self, phone):
-        if (len(phone) == 10) and (phone.isdigit()):
-            return phone
+class Phone(Field):
+    def __init__(self, value):
+        if not ((value.isdigit()) and (len(value) == 10)):
+            raise ValueError("Incorrect phone format! Phone not added!")
         else:
-            raise Exception("Wrong phone format")
+            super().__init__(value)
 
 
 # Клас для зберігання інформації про контакт, включаючи ім'я та список телефонів
@@ -49,30 +44,47 @@ class Record:
         phone = Phone(phone)
         if phone not in self.phones:
             self.phones.append(phone)
+            print("Phone added!")
         else:
-            raise Exception("This number isalready in the list!")
+            print("This phone is already in the list!")
         
-    # Видалення телефонів
-    def remove_phone(self, phone):
-        pass
-
-
     # Редагування телефонів
-    def edit_phone(self,phone, new_phone):
-        self.phones[self.find_phone(phone)] = new_phone
+    def edit_phone(self, phone, new_phone):
+        count = 0
+        for record in self.phones:
+            if record.value == phone:
+                self.phones[self.phones.index(record)] = Phone(new_phone)
+                count +=1
+                break
+        if count == 1:
+            print(f"Phone has been changed!")
+        else:
+            print(f"Phone {phone} is not found in contact {self.name}")
     
     # Пошук телефону
     def find_phone(self, phone):
-        if phone in self.phones:
-            return self.phones.index(phone)
+        for record in self.phones:
+            if record.value == phone:
+                return record.value
+        return f"Phone {phone} is not faund!"
+            
+    # Видалення телефонів
+    def remove_phone(self, phone):
+        result = 0
+        for record in self.phones:
+            if record.value == phone:
+                self.phones.remove(record)
+                print(f"Phone {phone} has been deleted!")
+                result += 1
+                break
+        if result == 1:
+            print(f"Phone {phone} has been deleted!")
         else:
-            raise Exception("This number {phone} is not faund!")
+            print(f"Phone {phone} is not deleted because it is not in the list!")
 
-    # def get_phones(self):
-        # return self.phones
-    
+    # Формат виводу даних про контакт
     def __str__(self) -> str:
-        return f"Contact name: {self.name.value}, phones: {';'.join(p.value for p in self.phones)}"
+        return f"Contact name: {self.name}, phones: {'; '.join(phone.value for phone in self.phones)}"
 
 
 # Клас для зберігання та управління записами
@@ -84,16 +96,28 @@ class AddressBook(UserDict):
 
     # Додавання записів
     def add_record(self, record):
-        self.data[record.name] = record.phones
+        self.data[record.name] = record
 
     # Пошук записів за іменем
     def find(self, name):
-        if name in self.data:
-            return self.data[name]
+        for record in self.data:
+            if record.value == name:
+                return self.data[record]
+            else:
+                return None
 
     # Видалення записів за іменем
-    def delete(self):
-        pass
+    def delete(self, name):
+        count = 0
+        for record in self.data:
+            if record.value == name:
+                del self.data[record]
+                count += 1
+                break
+        if count == 1:
+            print(f"Record for {name} has been deleted!")
+        else:
+            print(f"Record for {name} has not been deleted because it is not in the list!")
 
 
 
