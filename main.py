@@ -48,27 +48,25 @@ class Record:
         
     # Редагування телефонів
     def edit_phone(self, phone, new_phone):
-        count = 0
-        for record in self.phones:
-            if record.value == phone:
+        for number in self.phones:
+            if number.value == phone:
                 self.phones[self.phones.index(record)] = Phone(new_phone)
-                count +=1
                 break
-        if count != 1:
+        else:
             raise ValueError(f"Phone {phone} is not found in contact {self.name}")
     
     # Пошук телефону
     def find_phone(self, phone):
-        for record in self.phones:
-            if record.value == phone:
-                return record.value
+        for number in self.phones:
+            if number.value == phone:
+                return number
         return None
             
     # Видалення телефонів
     def remove_phone(self, phone):
-        for record in self.phones:
-            if record.value == phone:
-                self.phones.remove(record)
+        for number in self.phones:
+            if number.value == phone:
+                self.phones.remove(number)
         
 
     # Формат виводу даних про контакт
@@ -78,11 +76,6 @@ class Record:
 
 # Клас для зберігання та управління записами
 class AddressBook(UserDict):
-    def __init__(self, data = None):
-        if data is None:
-            data = {}
-        super().__init__(data)
-
     # Додавання записів
     def add_record(self, record):
         self.data[record.name.value] = record
