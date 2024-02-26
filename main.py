@@ -50,7 +50,7 @@ class Record:
     def edit_phone(self, phone, new_phone):
         for number in self.phones:
             if number.value == phone:
-                self.phones[self.phones.index(record)] = Phone(new_phone)
+                self.phones[self.phones.index(number)] = Phone(new_phone)
                 break
         else:
             raise ValueError(f"Phone {phone} is not found in contact {self.name}")
