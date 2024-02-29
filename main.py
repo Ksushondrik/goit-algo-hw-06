@@ -16,12 +16,11 @@ class Field:
 # Клас для зберігання імені контакту. Обов'язкове поле
 class Name(Field):
     # реалізація класу
-    class Name(Field):
-        def __init__(self, value):
-            if not value.strip():
-                raise ValueError("You entered an empty string!")
-            else:
-                super().__init__(value)
+    def __init__(self, value):
+        if not value.strip():
+            raise ValueError("You entered an empty string!")
+        else:
+            super().__init__(value)
             
 
 # Клас для зберігання номера телефону. Має валідацію формату (10 цифр)
